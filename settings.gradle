@@ -1,0 +1,2 @@
+include ':sample', ':componentstorage-core'
+rootProject.name='ComponentStorage'
