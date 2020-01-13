@@ -8,6 +8,12 @@ class ComponentStorage {
     private var logger: (String) -> Unit = {}
     val factoryStorage = mutableMapOf<String, IComponentFactory<*>>()
 
+    fun registerComponentFactory(vararg componentFactory: IComponentFactory<*>) {
+        for (factory in componentFactory) {
+            factoryStorage[factory.getName()] = factory
+        }
+    }
+
     @Suppress("UNCHECKED_CAST")
     @Synchronized
     fun <T> getOrCreateComponent(componentFactory: IComponentFactory<T>): T {
@@ -20,10 +26,6 @@ class ComponentStorage {
             return@getOrElse componentHolder
         }
         return targetComponentHolder.getOrCreate() as T
-    }
-
-    fun registerComponentFactory(componentFactory: IComponentFactory<*>) {
-        factoryStorage[componentFactory.getName()] = componentFactory
     }
 
     inline fun <reified T> getOrCreateComponent(): T {
