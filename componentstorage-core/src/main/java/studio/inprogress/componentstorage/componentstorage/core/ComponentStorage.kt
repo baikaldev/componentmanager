@@ -4,7 +4,7 @@ import studio.inprogress.componentstorage.componentstorage.core.factory.ICompone
 
 class ComponentStorage {
 
-    private val holderStorage = mutableMapOf<String, ComponentHolder<*>>()
+    val holderStorage = mutableMapOf<String, ComponentHolder<*>>()
     private var logger: (String) -> Unit = {}
     val factoryStorage = mutableMapOf<String, IComponentFactory<*>>()
 
