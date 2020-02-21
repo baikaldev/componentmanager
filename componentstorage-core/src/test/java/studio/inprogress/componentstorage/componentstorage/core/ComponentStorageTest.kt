@@ -310,4 +310,27 @@ class ComponentStorageTest {
 
         assertEquals(0, componentStorage.holderStorage.size)
     }
+
+    @Test
+    fun compositeComponentTest() {
+        componentStorage.registerComponentFactory(
+            AComponentFactory(AModule()),
+            DComponentFactory(),
+            CompositeComponentFactory()
+        )
+        val compositeComponent = componentStorage.getOrCreateComponent<CompositeComponent>()
+        val aComponentOwnerCount = componentStorage
+            .holderStorage[AComponent::class.java.simpleName]
+            ?.getOwnerCount()
+        assert(aComponentOwnerCount == 1)
+
+        val dComponentOwnerCount = componentStorage
+            .holderStorage[DComponent::class.java.simpleName]
+            ?.getOwnerCount()
+        assert(dComponentOwnerCount == 1)
+
+        componentStorage.releaseComponent<CompositeComponent>()
+
+        assert(componentStorage.holderStorage.size == 0)
+    }
 }

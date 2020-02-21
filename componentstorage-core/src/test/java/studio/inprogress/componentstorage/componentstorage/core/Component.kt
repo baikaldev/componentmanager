@@ -21,3 +21,7 @@ class CComponent(val cModule: CModule) {
 }
 
 class CModule(var someData: String = "")
+
+class CompositeComponent(val aComponent: AComponent, val dComponent: DComponent)
+
+class DComponent

@@ -19,7 +19,7 @@ class AComponentFactory(private val aModule: AModule) : IComponentFactory<ACompo
 }
 
 class BComponentFactory(private val bModule: BModule) : IComponentFactory<BComponent>,
-    ParentReleasable {
+    IParentReleasable {
 
     private val aComponentFactory = AComponentFactory(AModule())
 
@@ -35,13 +35,13 @@ class BComponentFactory(private val bModule: BModule) : IComponentFactory<BCompo
         return componentStorage.getOrCreateComponent(aComponentFactory).createBComponent(bModule)
     }
 
-    override fun getParentComponentName(): String {
-        return aComponentFactory.getName()
+    override fun getParentComponentNames(): List<String> {
+        return arrayListOf(aComponentFactory.getName())
     }
 }
 
 class CComponentFactory(private val cModule: CModule) : IComponentFactory<CComponent>,
-    ParentReleasable {
+    IParentReleasable {
 
     private val bComponentFactory: BComponentFactory = BComponentFactory(BModule())
 
@@ -57,8 +57,8 @@ class CComponentFactory(private val cModule: CModule) : IComponentFactory<CCompo
         return componentStorage.getOrCreateComponent(bComponentFactory).createCComponent(cModule)
     }
 
-    override fun getParentComponentName(): String {
-        return bComponentFactory.getName()
+    override fun getParentComponentNames(): List<String> {
+        return arrayListOf(bComponentFactory.getName())
     }
 }
 
@@ -77,3 +77,38 @@ class ConstComponentFactory(private val aModule: AModule) : IComponentFactory<AC
     }
 }
 
+class CompositeComponentFactory()
+    : IComponentFactory<CompositeComponent>, IParentReleasable {
+
+    override fun create(componentStorage: ComponentStorage): CompositeComponent {
+        val aComponent = componentStorage.getOrCreateComponent<AComponent>()
+        val dComponent = componentStorage.getOrCreateComponent<DComponent>()
+        return CompositeComponent(aComponent, dComponent)
+    }
+
+    override fun getName(): String {
+        return CompositeComponent::class.java.simpleName
+    }
+
+    override fun isReleasable(): Boolean {
+        return true
+    }
+
+    override fun getParentComponentNames(): List<String> {
+        return arrayListOf(AComponent::class.java.simpleName, DComponent::class.java.simpleName)
+    }
+}
+
+class DComponentFactory: IComponentFactory<DComponent> {
+    override fun create(componentStorage: ComponentStorage): DComponent {
+        return DComponent()
+    }
+
+    override fun getName(): String {
+        return DComponent::class.java.simpleName
+    }
+
+    override fun isReleasable(): Boolean {
+        return true
+    }
+}

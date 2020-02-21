@@ -58,8 +58,10 @@ class ComponentStorage {
         if (holder != null) {
             holder.release()
             if (holder.isReleased()) {
-                if (holder.componentFactory is ParentReleasable) {
-                    releaseComponent(holder.componentFactory.getParentComponentName())
+                if (holder.componentFactory is IParentReleasable) {
+                    for (parentName in holder.componentFactory.getParentComponentNames()) {
+                        releaseComponent(parentName)
+                    }
                 }
                 holderStorage.remove(holderKey)
             }
