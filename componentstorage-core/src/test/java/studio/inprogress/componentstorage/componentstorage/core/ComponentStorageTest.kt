@@ -23,7 +23,7 @@ class ComponentStorageTest {
 
         componentStorage.registerComponentFactory(componentFactory)
 
-        val component1 = componentStorage.getOrCreateComponent(componentFactory)
+        val component1 = componentStorage.getOrCreateComponent(AComponent::class.java)
 
         assertNotNull(component1)
         assertEquals(1, componentStorage.holderStorage.size)
@@ -35,7 +35,7 @@ class ComponentStorageTest {
         assertEquals(1, componentStorage.holderStorage.size)
         assertEquals(0, componentStorage.holderStorage[componentFactory.getName()]?.getOwnerCount())
 
-        componentStorage.releaseComponent<AComponent>()
+        componentStorage.releaseComponent(AComponent::class)
         assertEquals(1, componentStorage.holderStorage.size)
         assertEquals(0, componentStorage.holderStorage[componentFactory.getName()]?.getOwnerCount())
     }

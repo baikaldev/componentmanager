@@ -2,7 +2,7 @@ package studio.inprogress.componentstorage.componentstorage.core
 
 import studio.inprogress.componentstorage.componentstorage.core.factory.IComponentFactory
 
-class ComponentHolder<T>(
+class ComponentHolder<T : Any>(
     val componentFactory: IComponentFactory<T>,
     private val componentStorage: ComponentStorage,
     private val logger: (logMessage: String) -> Unit = {}

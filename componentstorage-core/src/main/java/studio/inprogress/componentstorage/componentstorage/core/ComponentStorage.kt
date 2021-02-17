@@ -1,6 +1,7 @@
 package studio.inprogress.componentstorage.componentstorage.core
 
 import studio.inprogress.componentstorage.componentstorage.core.factory.IComponentFactory
+import kotlin.reflect.KClass
 
 class ComponentStorage {
 
@@ -16,7 +17,7 @@ class ComponentStorage {
 
     @Suppress("UNCHECKED_CAST")
     @Synchronized
-    fun <T> getOrCreateComponent(componentFactory: IComponentFactory<T>): T {
+    fun <T: Any> getOrCreateComponent(componentFactory: IComponentFactory<T>): T {
 
         val holderKey = componentFactory.getName()
 
@@ -28,13 +29,25 @@ class ComponentStorage {
         return targetComponentHolder.getOrCreate() as T
     }
 
-    inline fun <reified T> getOrCreateComponent(): T {
-        val factory = factoryStorage[T::class.java.simpleName]
+    fun <T: Any> getOrCreateComponent(kClass: KClass<T>): T {
+        return getOrCreateComponent(kClass.java.simpleName)
+    }
+
+    fun <T: Any> getOrCreateComponent(clazz: Class<T>): T {
+        return getOrCreateComponent(clazz.simpleName)
+    }
+
+    private fun <T: Any> getOrCreateComponent(factoryKey: String): T {
+        val factory = factoryStorage[factoryKey]
         if (factory == null) {
-            throw IllegalStateException("Factory for ${T::class.java.simpleName} not registered")
+            throw IllegalStateException("Factory for $factoryKey not registered")
         } else {
             return getOrCreateComponent(factory) as T
         }
+    }
+
+    inline fun <reified T: Any> getOrCreateComponent(): T {
+        return getOrCreateComponent(T::class)
     }
 
     inline fun <reified T> releaseComponent() {
@@ -45,6 +58,10 @@ class ComponentStorage {
         } else {
             releaseComponent(factory)
         }
+    }
+
+    fun <T: Any> releaseComponent(kClass: KClass<T>) {
+        releaseComponent(kClass.java.simpleName)
     }
 
     @Synchronized
